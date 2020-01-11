@@ -51,7 +51,7 @@ def view_and_create_listings(request, id =""):
             email = email,
             phone_number = phone_number,
             address = address,
-            default_image = image_object,
+            default_image = image_object,   
             #categories = categories,
             activated = True
             )
@@ -206,7 +206,4 @@ class ListingsAPIView(generics.ListCreateAPIView):
     filter_backends = (filters.SearchFilter,)
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
-
-
-def views_increase():
 
