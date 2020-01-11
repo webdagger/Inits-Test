@@ -1,0 +1,102 @@
+<p>
+  Create Listing
+</p>
+{% if error%}
+{{error}}
+{%endif%}
+
+<form method="post" enctype="multipart/form-data" action="create_listing/" id="form" class="validate">
+  {%csrf_token%}
+  <div class="form-field">
+    <label for="listing-name">Full Name</label>
+    <input type="text" name="name" id="listing-name" placeholder="Business Name" required />
+  </div>
+  <div class="form-field">
+    <label for="email-input">Email</label>
+    <input type="email" name="email" id="email-input" placeholder="example@domain.com" required />
+  </div>
+  <div class="form-field">
+    <label for="description">Description</label>
+    <input type="text" name="description" id="description" placeholder="Business description" required />
+  </div>
+  <div class="form-field">
+    <label for="url-name">Url</label>
+    <input type="url" name="url" id="url-name" placeholder="www.example.com" required />
+  </div>
+  <div class="form-field">
+    <label for="phone-number">Phone number</label>
+    <input type="text" name="phone" id="phone-number" placeholder="Phone" required />
+  </div>
+  <div class="form-field">
+    <label for="Address">Address</label>
+    <input type="text" name="address" id="phone-number" placeholder="Address" required />
+  </div>
+  <div class="form-field">
+    <label for="image">default image</label>
+    <input type="file" name="image" id="image"  required />
+  </div>
+  <div class="form-field">
+    <label for=""></label>
+    <input type="submit" value="create listing" />
+  </div>
+</form>
+
+  <p> create category</p>
+  <form method="post" action="create_category/" id="form" class="validate">
+    {%csrf_token%}
+    <div class="form-field">
+      <label for="full-name">Category</label>
+      <input type="text" name="name" id="full-name" placeholder="Joe Bloggs" required />
+    </div>
+    <div class="form-field">
+      <label for="email-input">Description</label>
+      <input type="text" name="description" id="email-input" placeholder="example@domain.com" required />
+    </div>
+    
+    <div class="form-field">
+      <label for=""></label>
+      <input type="submit" value="Sign Up" />
+    </div>
+  </form>
+
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #eee;
+  font-family: 'helvetica neue', helvetica, arial, sans-serif;
+  color: #222;
+}
+
+#form {
+  max-width: 700px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.form-field {
+  display: flex;
+  margin: 0 0 1rem 0;
+}
+label, input {
+  width: 70%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  justify-content: space-between;
+  font-size: 1.1rem;
+}
+label {
+  text-align: right;
+  width: 30%;
+}
+input {
+  border: 2px solid #aaa;
+  border-radius: 2px;
+}
+
+</style>

@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Listings </title>
+  <!-- load CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">    <!-- Google web font "Open Sans" -->
+  <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">                                        <!-- https://getbootstrap.com/ -->
+  <link rel="stylesheet" href="{% static '/css/templatemo-style.css' %}">                                     <!-- Templatemo style -->
+
+</head>
+
+<body>
+  <!-- Loader -->
+
+<!--Top nav-->
+<div class="topnav">
+    <a class="active" href="index/">View Listings</a>
+    <a href="login/">Admin Login</a>
+
+    <form action="search/" method="get">
+      {% csrf_token %}
+        <input type="text" name="query" placeholder="Search Listings">
+    </form>
+    
+</div>
+
+ <div class="container">
+{% if query %}
+    {%for q in query%}
+<section class="row tm-section tm-mb-30">
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0 text-center">
+    <img src="{{q.default_image.image.url}}" alt="Image" class="img-fluid">
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+    <div class="tm-flex-center p-5">
+      <div class="tm-flex-center tm-flex-col">
+        <h2 class="tm-align-left">{{q.name}}</h2>
+        <p>{{q.description}} </p>
+        <a href="view_listing/{{q.id}}" class="btn btn-primary">Read More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endfor %}
+{% endif %}
+
+
+</body>
+</html>
