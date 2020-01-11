@@ -65,6 +65,9 @@ def view_and_create_listings(request, id =""):
     elif request.method == "GET":
         id = int(id)
         listing_object = get_object_or_404(Listing, id=id)
+        # update the views counts
+        # TODO crude and does not track for id
+        listing_object.view_count + 1
         tmpl_vars = {'listing':listing_object}
         return render(request, 'view.html', tmpl_vars)
 
@@ -203,3 +206,7 @@ class ListingsAPIView(generics.ListCreateAPIView):
     filter_backends = (filters.SearchFilter,)
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
+
+
+def views_increase():
+
