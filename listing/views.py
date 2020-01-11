@@ -73,12 +73,14 @@ def view_and_create_listings(request, id =""):
 
 
 @login_required
-def delete_listings(request):
+def delete_listings(request, id):
     if request.method == "GET":
-        id = request.GET['id']
+        id = int(id)
         try:
             listing_object = Listing.objects.get(id=id)
             listing_object.delete()
+            tmpl_vars = {'message':'sucessfully deleted listing'}
+            return render("index.html", tmpl_vars)
         except Listing.DoesNotExist:
             tmpl_vars = {'error':'The listing you are trying to delete does not exist'}
             return render("index.html", tmpl_vars)
@@ -151,13 +153,15 @@ def create_or_view_category(request, id=""):
         return render(request, 'view.html', tmpl_vars)
 
 @login_required
-def delete_category(request):
+def delete_category(request, id):
 
     if request.method == "GET":
-        id = request.GET['id']
+        id = int(id)
         try:
             category_object = Category.objects.get(id=id)
             category_object.delete()
+            tmpl_vars = {'message':'sucessfully deleted category'}
+            return render("index.html", tmpl_vars)
         except Category.DoesNotExist:
             tmpl_vars = {'error':'The category you are trying to delete does not exist'}
             return render("index.html", tmpl_vars)
