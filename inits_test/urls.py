@@ -23,14 +23,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', listing_views.view_all_listings, name="view_all_listings"),
     path('create/', listing_views.create, name="create"),
-    url(r'create_listing/', listing_views.view_and_create_listings, name="view_and_create_listings"),
+    url(r'create_listing/', listing_views.create_listings, name="create_listings"),
     url(r'create_category/', listing_views.create_or_view_category, name="create_or_view_category"),
-    url(r'view_listing/(?P<id>\d+)$', listing_views.view_and_create_listings, name="view_and_create_listings"),
+    url(r'view_listing/(?P<id>\d+)$', listing_views.view_all_listings, name="view_all_listings"),
     url(r'view_category/(?P<id>\d+)$', listing_views.create_or_view_category, name="create_or_view_category"),
     url(r'modify_listing/(?P<id>\d+)$', listing_views.modify_listings, name="modify_listings"),
     url(r'modify_listing/', listing_views.modify_listings, name="modify_listings"),
     url(r'modify_category/(?P<id>\d+)$', listing_views.modify_category, name="modify_category"),
     url(r'delete_listing/(?P<id>\d+)$', listing_views.delete_listings, name="delete_listing"),
+    url(r'search/(?P<query>)$', listing_views.search, name="search"),
 
 
 

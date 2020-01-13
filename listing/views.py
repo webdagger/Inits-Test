@@ -37,7 +37,7 @@ def login_admin(request):
 
 def create_listings(request):
     if request.method == "POST":
-        form = ListingForm(request.Post)
+        form = ListingForm(request.POST)
         # basic form validation
         if form.is_valid():
             print(request.POST)
@@ -126,36 +126,38 @@ def delete_listings(request, id):
 @login_required
 def modify_listings(request, id=""):
     if request.method == "POST":
-        id = request.POST['id']
-        listing_object = get_object_or_404(Listing, id=id)
-        # Get the remaining data that is sent and change the last modified date
-        name = str(request.POST['name'])
-        description = str(request.POST['description'])
-        url = str(request.POST['url'])
-        email = str(request.POST['email'])
-        phone_number = str(request.POST['phone'])
-        address = str(request.POST['address'])
-        default_image = request.FILES['image']
+        form = ListingForm(request.POST)
+        if form.is_valid():
+            id = request.POST['id']
+            listing_object = get_object_or_404(Listing, id=id)
+            # Get the remaining data that is sent and change the last modified date
+            name = bleach.clean(str(request.POST['name']))
+            description = bleach.clean(str(request.POST['description']))
+            url = bleach.clean(str(request.POST['url']))
+            email = bleach.clean(str(request.POST['email']))
+            phone_number = bleach.clean(str(request.POST['phone']))
+            address = bleach.clean(str(request.POST['address']))
+            default_image = request.FILES['image']
 
         #categories = request.POST['categories']
-        last_modified_date = datetime.now()
-        listing_object.name = name
-        listing_object.description = description
-        listing_object.url = url
-        listing_object.email = email
-        listing_object.phone_number = phone_number
-        listing_object.address = address
-        listing_object.default_image.image = default_image
-        #listing_object.categories = categories
-        listing_object.last_modified_date = last_modified_date
-        listing_object.save()
-        return render(request, "create.html")
+            last_modified_date = datetime.now()
+            listing_object.name = name
+            listing_object.description = description
+            listing_object.url = url
+            listing_object.email = email
+            listing_object.phone_number = phone_number
+            listing_object.address = address
+            listing_object.default_image.image = default_image
+            #listing_object.categories = categories
+            listing_object.last_modified_date = last_modified_date
+            listing_object.save()
+            return render(request, "create.html")
                 
     else:
         # Method == GET Populate the form
         id = id
         listing_object = get_object_or_404(Listing, id=id)
-        tmpl_vars = {'listing':listing_object}
+        tmpl_vars = {'listing':listing_object, 'form':ListingForm}
         return render(request, 'modify.html', tmpl_vars)
 
 def create(request):
@@ -181,7 +183,7 @@ def create_or_view_category(request, id=""):
         # GET Request to view the category
         id = int(id)
         category_object = get_object_or_404(Category, id=id)
-        tmpl_vars = {'category_object': category_object}
+        tmpl_vars = {'category_object': category_object, 'form':CategoryForm}
         return render(request, 'view.html', tmpl_vars)
 
 @login_required
@@ -204,22 +206,25 @@ def delete_category(request, id):
 @login_required
 def modify_category(request):
     if request.method == "POST":
-        id = request.POST['id']
-        category_object = get_object_or_404(Category, id=id)
-        # Get the remaining data that is sent and change the last modified date
-        name = str(request.POST['username'])
-        description = str(request.POST['password'])
-        last_modified_date = datetime.now()
-        # Check to avoid trying to update srtict fields
-        if name or description == "":
-            tmpl_vars = {'error':"Error trying to update category"}
-            return redirect("modify_categories/", tmpl_vars)
-        else: 
-            category_object.name = name
-            category_object.description = description
-            category_object.last_modified_date = last_modified_date
-            category_object.save()
-            return redirect(f"modify_categories/{id}")
+        form = ListingForm(request.POST)
+        if form.is_valid():
+
+            id = request.POST['id']
+            category_object = get_object_or_404(Category, id=id)
+            # Get the remaining data that is sent and change the last modified date
+            name = bleach.clean(str(request.POST['username']))
+            description = bleach.clean(str(request.POST['password']))
+            last_modified_date = datetime.now()
+            # Check to avoid trying to update srtict fields
+            if name or description == "":
+                tmpl_vars = {'error':"Error trying to update category"}
+                return redirect("modify_categories/", tmpl_vars)
+            else: 
+                category_object.name = name
+                category_object.description = description
+                category_object.last_modified_date = last_modified_date
+                category_object.save()
+                return redirect(f"modify_categories/{id}")
     
 
 

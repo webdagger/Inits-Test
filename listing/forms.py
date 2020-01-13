@@ -4,10 +4,10 @@ from listing.models import Listing
 
 class ListingForm(forms.Form):
     name = forms.CharField(max_length=1000, required=True, label='name')
-    description = forms.Textarea(required=True)
-    url = forms.URLInput(required=True)
+    description = forms.Textarea()
+    url = forms.URLInput()
     phone_number = forms.CharField(max_length=15, required=True)
-    address = forms.Textarea(required=True)
+    address = forms.Textarea()
     default_image = forms.ImageField(required=False)
 
     # We need to pass the available categories as a list to the multiple choices field.
