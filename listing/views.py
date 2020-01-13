@@ -5,15 +5,20 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics
 from rest_framework import filters
 from datetime import datetime
 
+import bleach
+
 from listing.models import Category
 from listing.models import Listing
 from listing.models import Image
 from listing.serializers import ListingSerializer
+from listing.forms import ListingForm
+from listing.forms import CategoryForm
 
 # Create your views here.
 
@@ -29,18 +34,41 @@ def login_admin(request):
         redirect('login/', tmpl_vars)    
 
 
-def view_and_create_listings(request, id =""):
-    if request.method == "POST":
-        name = str(request.POST['name'])
-        description = str(request.POST['description'])
-        url = str(request.POST['url'])
-        email = str(request.POST['email'])
-        phone_number = str(request.POST['phone'])
-        address = str(request.POST['address'])
-        default_image = request.FILES['image']
-        #categories = request.POST['categories']
-        # TODO loop the categories as a select 
 
+def create_listings(request):
+    if request.method == "POST":
+        form = ListingForm(request.Post)
+        # basic form validation
+        if form.is_valid():
+            print(request.POST)
+            name = bleach.clean(str(request.POST['name']))
+            description = bleach.clean(str(request.POST['description']))
+            url = bleach.clean(str(request.POST['url']))
+            email = bleach.clean(str(request.POST['email']))
+            phone_number = bleach.clean(str(request.POST['phone']))
+            address = bleach.clean(str(request.POST['address']))
+            default_image = request.FILES['image']
+            # TODO Brute you should consider making this better. To ensure the program does not break you have to make sure 
+            # the category is not strictly enforced.  Businesses can be saved without category
+            chosen_categories = []
+            # The categories object allows to save the object of the retrived categories as a list so it can be  passed and saved
+            categories_object = []
+            for key, value in request.POST.items():
+                # the radio returns a list in the post request with the key as the category 
+                try:
+                    i = int(key)
+                    chosen_categories.append(int(key))
+                except ValueError:
+                    # it means the key cannot be changed to a int
+                    pass
+            print(chosen_categories)
+            for id in chosen_categories:
+                try:
+                    i = Category.objects.get(id=id)
+                    categories_object.append(i)
+                except ObjectDoesNotExist:
+                    pass
+        
         try:
             image_object = Image(image=default_image)
             image_object.save()
@@ -52,10 +80,11 @@ def view_and_create_listings(request, id =""):
             phone_number = phone_number,
             address = address,
             default_image = image_object,   
-            #categories = categories,
-            activated = True
+            activated = True,
             )
             listing.save()
+            
+            listing.categories.add(*categories_object)
             # Object saved successfully ? Notify admin
             tmpl_vars = {'message': "Listings sucessfully created"}
             return render(request, 'view.html', tmpl_vars)
@@ -63,13 +92,19 @@ def view_and_create_listings(request, id =""):
             tmpl_vars = {"error": f"There was an error attempting to create the listing \\n {e}"}
             return render (request, 'view.html', tmpl_vars)
     elif request.method == "GET":
-        id = int(id)
-        listing_object = get_object_or_404(Listing, id=id)
-        # update the views counts
-        # TODO crude and does not track for id
-        listing_object.view_count + 1
-        tmpl_vars = {'listing':listing_object}
-        return render(request, 'view.html', tmpl_vars)
+        # I get all the categories and save the name in a dict of {id:'value'} and pass it as choices in the tmpl_vars 
+        # Note the id's are passed so we can find out from the html which of the POST request a choice if POST['value'] can be an int
+        choices = {}
+        
+        
+        categories_object = Category.objects.all()
+        for category in categories_object:
+            choices.update({category.id:category.name})
+
+        
+        # TODO update the views counts
+        tmpl_vars = {'choices':choices, 'form':ListingForm}
+        return render(request, 'create listing.html', tmpl_vars)
 
 
 @login_required
@@ -127,21 +162,18 @@ def create(request):
     return render(request, "create.html")
 
 def create_or_view_category(request, id=""):
-    print('hi')
-    print(request.method)
     if request.method == "POST":
         # Create category
-        name = str(request.POST['name'])
-        description = str(request.POST['description'])
-        print(name)
-        print(description)
-        print(name)
+        form = CategoryForm
+        if form.is_valid():
 
-        category_object = Category(
-            name = name,
-            description = description,
-            activated = True,
-        )
+            name = bleach.clean(str(request.POST['name']))
+            description = bleach.clean(str(request.POST['description']))
+            category_object = Category(
+                name = name,
+                description = description,
+                activated = True,
+            )
         category_object.save()
         tmpl_vars = {'message': "Category created"}
         return render(request, 'view.html',tmpl_vars )
@@ -191,14 +223,22 @@ def modify_category(request):
     
 
 
-def search(request):
+def search(request, query):
     if request.method == "GET":
-        query = str(request.GET['query'])
+        query = query
         query_object = Listing.objects.select_related().filter(Q(name__icontains=query) | Q(description__icontains=query))
         tmpl_vars = { 'query': query_object}
         return render(request,'search.html', tmpl_vars)
 
-def view_all_listings(request):
+def view_all_listings(request, id=""):
+    if id:
+        try:
+        
+            query = get_object_or_404(Listing, id=id)
+            return render(request, query)
+        except ValueError:
+            # The id was not convertable to int
+            return render(request, "index.html", {'error':f'{ValueError}, The value you are passing is not an int'})
     query = Listing.objects.all()
     tmpl_vars = {'query': query}
     return render(request, 'index.html', tmpl_vars)

@@ -1,54 +1,62 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Listings </title>
-  <!-- load CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">    <!-- Google web font "Open Sans" -->
-  <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">                                        <!-- https://getbootstrap.com/ -->
-  <link rel="stylesheet" href="{% static '/css/templatemo-style.css' %}">                                     <!-- Templatemo style -->
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Directory</title>
+    <link rel="stylesheet" href="{%static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/ionicons.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="{% static 'assets/css/Login-Form-Dark.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/Projects-Clean.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
 </head>
 
-<body>
-  <!-- Loader -->
+<body style="background-color:#66a6da;color:rgb(74,90,106);">
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-search">
+        <div class="container"><a class="navbar-brand" href="#" style="color:#541717;">Business Directory Service</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav"></ul>
+                <form class="form-inline mx-auto" method="get" action="search/">
+                    {% csrf_token %}
+                    <div class="form-group"><label for="search-field"><i class="fa fa-search"></i></label><input class="form-control search-field" type="search" name="query" placeholder="Search business" autocomplete="on" id="search-field" style="background-color:#ffffff;font-family:Roboto, sans-serif;"></div>
+                    </form>
+                <button class="btn btn-primary" type="button">Admin Login</button></div>
+        </div>
+    </nav>
 
-<!--Top nav-->
-<div class="topnav">
-    <a class="active" href="index/">View Listings</a>
-    <a href="login/">Admin Login</a>
+    {% if query %}   
+        {%for q in query%}
 
-    <form action="search/" method="get">
-      {% csrf_token %}
-        <input type="text" name="query" placeholder="Search Listings">
-    </form>
-    
-</div>
+    <div class="container-fluid" style="font-family:Roboto, sans-serif;">
+        <div class="row">
+            <div class="col-4"><img class="img-fluid" src="{{q.default_image.image.url}}" width="256" height="72"></div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col">
+                        <h3 style="color:rgb(2,23,9);">{{q.name}}</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>{{q.description}}  <br /> <a href="view_listing/{{q.id}}">Read more</a></p>
+                    </div>
+                </div>
+            </div>
 
- <div class="container">
-{% if query %}
-    {%for q in query%}
-<section class="row tm-section tm-mb-30">
-  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0 text-center">
-    <img src="{{q.default_image.image.url}}" alt="Image" class="img-fluid">
-  </div>
-  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
-    <div class="tm-flex-center p-5">
-      <div class="tm-flex-center tm-flex-col">
-        <h2 class="tm-align-left">{{q.name}}</h2>
-        <p>{{q.description}} </p>
-        <a href="view_listing/{{q.id}}" class="btn btn-primary">Read More</a>
-      </div>
-    </div>
-  </div>
-</section>
-
+            
 {% endfor %}
 {% endif %}
 
 
+        </div>
+    </div>
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/bootstrap/js/bootstrap.min.j' %}"></script>
 </body>
+
 </html>

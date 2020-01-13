@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Directory</title>
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/Login-Form-Dark.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/Projects-Clean.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+
+</head>
+
+<body style="background-color:#66a6da;color:#0b0b0b;">
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-search">
+        <div class="container"><a class="navbar-brand" href="#" style="color:#541717;">Business Directory Service</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav"></ul>
+                <form class="form-inline mx-auto" action="search/" method="get" target="_self">
+                    <div class="form-group"><label for="search-field"><i class="fa fa-search"></i></label><input class="form-control search-field" type="search" name="search" placeholder="Search business" autocomplete="on" id="search-field" style="background-color:#ffffff;font-family:Roboto, sans-serif;"></div>
+                </form><a class="btn btn-light mx-auto action-button" role="button" href="#">Search</a></div>
+        </div>
+    </nav>
+    <div class="container-fluid" style="font-family:Roboto, sans-serif;">
+        <div class="row">
+            <div class="col">
+                <p>Create Listings</p>
+                <form action="create_listing/" method="post" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Business Name</span></div><input class="form-control" type="text" name="name" required="" placeholder="Please enter the name of the business"></div>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Business Email</span></div><input class="form-control" type="text" name="email" required="" placeholder="Enter email" inputmode="email"></div>
+                    <div class="form-group"><label>Description</label><textarea class="form-control" name="description" required="" placeholder="Enter description"></textarea></div>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">URL</span></div><input class="form-control" type="text" name="url" required="" placeholder="Enter url" inputmode="url"></div>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Phone number</span></div><input class="form-control" type="text" name="phone" required="" placeholder="Enter Phone"></div>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Address</span></div><input class="form-control" type="text" name="address" required="" placeholder="Enter Address"></div>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Upload Default Image</span></div><input class="form-control" type="file" name="image"></div>
+                    {% for id, value in choices.items %}
+                    
+                            
+                        <div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="{{id}}">
+                                <label class="form-check-label" for="formCheck-1">{{value}}</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-danger btn-block" type="submit">Button</button></form>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
